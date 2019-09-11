@@ -1,0 +1,123 @@
+<div *ngFor=" let navtile of navtiles; index as i ">
+  
+  <!-- card / nav-tile -->
+  <div class="card nav-tile">
+    
+    <!-- card header -->
+    <h5 class="card-header" [style.background]=" tileColors[i].header ">
+      {{ navtile.name }}
+    </h5>
+
+    <!-- card body -->
+    <div class="card-block">
+      <ul class="nav-tile-links">
+        <ng-container *ngFor="let navtilelink of navtile.links">
+
+          <ng-container *ngIf="!navtilelink.links">
+            
+            <li *ngIf="!navtilelink.icon">
+              <ng-template [ngIf]=" navtilelink.hasOwnProperty('picker') ">
+                <a href="javascript:void(0)" class="link-normal" (click)="alert(12);openPicker(navtilelink.picker);console.log(navtilelink.picker);">
+                  {{ navtilelink.name }}
+                </a>
+              </ng-template>
+              <ng-template [ngIf]=" !navtilelink.hasOwnProperty('picker') ">
+                <a [routerLink]="[ navtilelink.route ]" class="link-normal">
+                  {{ navtilelink.name }}
+                </a>                
+              </ng-template>
+
+            </li>
+
+            <a *ngIf="navtilelink.icon" class="link-normal"
+              [routerLink]="[ navtilelink.route ]">
+              <clr-icon [attr.shape]="navtilelink.icon"></clr-icon>
+              {{ navtilelink.name }}
+            </a>
+
+          </ng-container>
+
+          <ng-container *ngIf=" navtilelink.links && ( filterBy === '' || filterBy === navtilelink.name ) ">
+            <div>
+              <clr-icon [attr.shape]="navtilelink.icon"></clr-icon>
+              {{ navtilelink.name }}
+            </div>
+            <li *ngFor="let link of navtilelink.links">
+
+              <ng-template [ngIf]=" link.hasOwnProperty('picker') ">
+                <ng-template [ngIf]=" !link.hasOwnProperty('nameOptions') && !link.hasOwnProperty('nameOptions2') ">
+                  <a href="javascript:void(0)" class="link-normal" (click)="openPicker(link.picker);">
+                    {{ link.name }}
+                  </a>
+                </ng-template>
+                <ng-template [ngIf]=" link.hasOwnProperty('nameOptions') ">
+                  <div class="nameOptions">
+
+                    <a href="javascript:void(0)" class="link-normal" (click)="openPicker(link.picker);">
+                      {{ link.name }}
+                      {{ (nameOption != null) ? nameOption.name : link.nameOptions ? link.nameOptions[0].name : '' }}
+                    </a>
+
+                    <!-- <clr-dropdown>
+                      <button type="button" clrDropdownTrigger>
+                      </button>
+                      <clr-dropdown-menu *clrIfOpen>
+                        <button type="button" 
+                          clrDropdownItem
+                          (click)=" nameOption = item "
+                          *ngFor="let item of link.nameOptions">{{ item.name }}</button>
+                      </clr-dropdown-menu>
+                    </clr-dropdown> -->
+
+                  </div>                  
+                </ng-template>
+                <ng-template [ngIf]=" link.hasOwnProperty('nameOptions2') ">
+
+                    <a href="javascript:void(0)" class="link-normal" (click)="openPicker(link.picker);">
+                      {{ link.name }}
+                      {{ link.nameOptions2[0].name }}
+                    </a>
+
+                    <ng-template [ngIf]=" link.nameOptions2.length > 1 ">
+                      <ng-container
+                        *ngFor=" let item of link.nameOptions2; index as i; first as isFirst; last as isLast ">
+                        <ng-template [ngIf]=" isFirst ">, </ng-template>
+                        <ng-template [ngIf]=" !isFirst ">
+                          <a href="javascript:void(0)" class="link-normal" (click)="openPicker(link.picker);">
+                            {{ item.name }}
+                          </a>
+                          <ng-template [ngIf]=" !isLast && link.nameOptions2.length - i !== 2 ">, </ng-template>
+                          <ng-template [ngIf]=" !isLast && link.nameOptions2.length - i === 2 "> or </ng-template>
+                        </ng-template>
+                      </ng-container>
+                    </ng-template>
+
+
+
+                </ng-template>
+              </ng-template>
+
+              <ng-template [ngIf]=" !link.hasOwnProperty('picker') ">
+                <a class="link-normal"
+                  [routerLink]="[ link.route ]">
+                  {{ link.name }}
+                </a>
+              </ng-template>
+
+            </li>
+          </ng-container>
+
+        </ng-container>
+      </ul>
+    </div>
+    
+  </div>
+
+
+
+</div>
+
+<app-picker 
+  [opened]="opened"
+  [pckr]="pckr"
+  (modalOpenedStateChanged)="onModalOpenedStateChanged( $event )"></app-picker>
